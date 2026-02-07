@@ -108,6 +108,62 @@ resource "google_firestore_index" "notifications_archived_created" {
   depends_on = [google_firestore_database.this]
 }
 
+# Work/Personal view: archived + context + createdAt
+resource "google_firestore_index" "notifications_context_created" {
+  provider = google-beta
+  project  = var.project_id
+
+  database   = google_firestore_database.this.name
+  collection = "notifications"
+
+  query_scope = "COLLECTION"
+
+  fields {
+    field_path = "archived"
+    order      = "ASCENDING"
+  }
+
+  fields {
+    field_path = "context"
+    order      = "ASCENDING"
+  }
+
+  fields {
+    field_path = "createdAt"
+    order      = "DESCENDING"
+  }
+
+  depends_on = [google_firestore_database.this]
+}
+
+# Critical view: archived + priority + createdAt
+resource "google_firestore_index" "notifications_priority_created" {
+  provider = google-beta
+  project  = var.project_id
+
+  database   = google_firestore_database.this.name
+  collection = "notifications"
+
+  query_scope = "COLLECTION"
+
+  fields {
+    field_path = "archived"
+    order      = "ASCENDING"
+  }
+
+  fields {
+    field_path = "priority"
+    order      = "ASCENDING"
+  }
+
+  fields {
+    field_path = "createdAt"
+    order      = "DESCENDING"
+  }
+
+  depends_on = [google_firestore_database.this]
+}
+
 # -----------------------------------------------------------------------------
 # Firestore Security Rules
 # -----------------------------------------------------------------------------

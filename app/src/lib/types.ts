@@ -50,3 +50,20 @@ export interface NormalizedNotification {
   priority: Priority;
   timeSensitive: boolean;
 }
+
+export type NotificationView = "all" | "work" | "personal" | "critical";
+
+export interface NotificationFilters {
+  view: NotificationView;
+  providers: Provider[];
+  priorities: Priority[];
+  unreadOnly: boolean;
+  search: string;
+}
+
+export interface UserPreferences {
+  defaultView: NotificationView;
+  timezone: string;
+  quietHoursStart: string | null;
+  quietHoursEnd: string | null;
+}

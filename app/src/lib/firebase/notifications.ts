@@ -9,11 +9,13 @@ import {
   onSnapshot,
   getDocs,
   updateDoc,
+  writeBatch,
   type QueryDocumentSnapshot,
   type DocumentData,
+  type QueryConstraint,
 } from "firebase/firestore";
 import { getClientDb } from "./client";
-import type { Notification } from "@/lib/types";
+import type { Notification, NotificationView } from "@/lib/types";
 
 const PAGE_SIZE = 25;
 
@@ -21,14 +23,37 @@ function mapDoc(doc: QueryDocumentSnapshot<DocumentData>): Notification {
   return { id: doc.id, ...doc.data() } as Notification;
 }
 
+function viewConstraints(view: NotificationView): QueryConstraint[] {
+  switch (view) {
+    case "work":
+      return [
+        where("archived", "==", false),
+        where("context", "in", ["work", "both"]),
+      ];
+    case "personal":
+      return [
+        where("archived", "==", false),
+        where("context", "in", ["personal", "both"]),
+      ];
+    case "critical":
+      return [
+        where("archived", "==", false),
+        where("priority", "in", ["critical", "high"]),
+      ];
+    default:
+      return [where("archived", "==", false)];
+  }
+}
+
 export function subscribeNotifications(
   userId: string,
+  view: NotificationView,
   callback: (notifications: Notification[], lastDoc: QueryDocumentSnapshot<DocumentData> | null, hasMore: boolean) => void
 ): () => void {
   const db = getClientDb();
   const q = query(
     collection(db, `users/${userId}/notifications`),
-    where("archived", "==", false),
+    ...viewConstraints(view),
     orderBy("createdAt", "desc"),
     limit(PAGE_SIZE)
   );
@@ -43,6 +68,7 @@ export function subscribeNotifications(
 
 export async function loadMoreNotifications(
   userId: string,
+  view: NotificationView,
   lastDoc: QueryDocumentSnapshot<DocumentData>
 ): Promise<{
   notifications: Notification[];
@@ -52,7 +78,7 @@ export async function loadMoreNotifications(
   const db = getClientDb();
   const q = query(
     collection(db, `users/${userId}/notifications`),
-    where("archived", "==", false),
+    ...viewConstraints(view),
     orderBy("createdAt", "desc"),
     startAfter(lastDoc),
     limit(PAGE_SIZE)
@@ -76,6 +102,16 @@ export async function markAsRead(
   });
 }
 
+export async function markAsUnread(
+  userId: string,
+  notificationId: string
+): Promise<void> {
+  const db = getClientDb();
+  await updateDoc(doc(db, `users/${userId}/notifications/${notificationId}`), {
+    read: false,
+  });
+}
+
 export async function archiveNotification(
   userId: string,
   notificationId: string
@@ -84,4 +120,28 @@ export async function archiveNotification(
   await updateDoc(doc(db, `users/${userId}/notifications/${notificationId}`), {
     archived: true,
   });
+}
+
+export async function batchMarkAsRead(
+  userId: string,
+  ids: string[]
+): Promise<void> {
+  const db = getClientDb();
+  const batch = writeBatch(db);
+  for (const id of ids) {
+    batch.update(doc(db, `users/${userId}/notifications/${id}`), { read: true });
+  }
+  await batch.commit();
+}
+
+export async function batchArchive(
+  userId: string,
+  ids: string[]
+): Promise<void> {
+  const db = getClientDb();
+  const batch = writeBatch(db);
+  for (const id of ids) {
+    batch.update(doc(db, `users/${userId}/notifications/${id}`), { archived: true });
+  }
+  await batch.commit();
 }

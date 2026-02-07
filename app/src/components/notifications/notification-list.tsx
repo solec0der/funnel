@@ -2,6 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { NotificationItem } from "./notification-item";
+import { NotificationGroupHeader } from "./notification-group";
+import { BulkActionsBar } from "./bulk-actions-bar";
+import { groupByDate } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Bell, Cable } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +17,9 @@ interface NotificationListProps {
   loadingMore: boolean;
   hasMore: boolean;
   loadMore: () => void;
+  selectedIds: Set<string>;
+  onToggleSelection: (id: string) => void;
+  onClearSelection: () => void;
 }
 
 export function NotificationList({
@@ -22,8 +28,12 @@ export function NotificationList({
   loadingMore,
   hasMore,
   loadMore,
+  selectedIds,
+  onToggleSelection,
+  onClearSelection,
 }: NotificationListProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const selectionMode = selectedIds.size > 0;
 
   useEffect(() => {
     if (!hasMore || loadingMore) return;
@@ -70,22 +80,44 @@ export function NotificationList({
     );
   }
 
+  const groups = groupByDate(notifications);
+
   return (
-    <div className="flex flex-col gap-1">
-      {notifications.map((n) => (
-        <NotificationItem key={n.id} notification={n} />
-      ))}
+    <>
+      <div className="flex flex-col gap-1">
+        {groups.map((group) => (
+          <div key={group.label}>
+            <NotificationGroupHeader label={group.label} />
+            <div className="flex flex-col gap-1">
+              {group.notifications.map((n) => (
+                <NotificationItem
+                  key={n.id}
+                  notification={n}
+                  selectable={selectionMode}
+                  selected={selectedIds.has(n.id)}
+                  onToggleSelection={onToggleSelection}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
 
-      {/* Sentinel for infinite scroll */}
-      <div ref={sentinelRef} className="h-1" />
+        {/* Sentinel for infinite scroll */}
+        <div ref={sentinelRef} className="h-1" />
 
-      {loadingMore && (
-        <div className="flex flex-col gap-2 py-2">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-lg" />
-          ))}
-        </div>
-      )}
-    </div>
+        {loadingMore && (
+          <div className="flex flex-col gap-2 py-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-16 w-full rounded-lg" />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <BulkActionsBar
+        selectedIds={selectedIds}
+        onClearSelection={onClearSelection}
+      />
+    </>
   );
 }
