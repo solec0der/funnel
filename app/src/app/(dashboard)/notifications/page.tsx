@@ -6,6 +6,7 @@ import { NotificationFiltersBar } from "@/components/notifications/notification-
 import { useNotifications } from "@/hooks/use-notifications";
 import { usePreferences } from "@/hooks/use-preferences";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PushPrompt } from "@/components/notifications/push-prompt";
 import type { NotificationView, NotificationFilters } from "@/lib/types";
 
 const VIEWS: { value: NotificationView; label: string }[] = [
@@ -75,6 +76,8 @@ export default function NotificationsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold tracking-tight">Notifications</h1>
       </div>
+
+      <PushPrompt />
 
       <Tabs value={filters.view} onValueChange={handleViewChange}>
         <TabsList>

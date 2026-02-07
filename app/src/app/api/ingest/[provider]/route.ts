@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase/admin";
 import { getNormalizer, PROVIDERS } from "@/lib/normalizers";
 import { FieldValue } from "firebase-admin/firestore";
+import { sendPushNotification } from "@/lib/push/send";
 import type { Provider } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -106,6 +107,23 @@ export async function POST(
     archived: false,
     createdAt: FieldValue.serverTimestamp(),
   });
+
+  // 8. Send push notification (fire-and-forget)
+  sendPushNotification(
+    userId,
+    {
+      title: normalized.title,
+      body: normalized.body,
+      url: normalized.url,
+      notificationId: notificationRef.id,
+      priority: normalized.priority,
+    },
+    {
+      pushEnabled: source.pushEnabled ?? true,
+      pushPriorityOverride: source.pushPriorityOverride ?? null,
+      provider,
+    }
+  ).catch((err) => console.error("[ingest] Push send error:", err));
 
   return NextResponse.json(
     { ok: true, notificationId: notificationRef.id },

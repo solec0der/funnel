@@ -4,6 +4,9 @@ import {
   Cloud,
   Triangle,
   Webhook,
+  Ticket,
+  BookOpen,
+  Mail,
   type LucideIcon,
 } from "lucide-react";
 import type { Provider } from "@/lib/types";
@@ -39,6 +42,21 @@ export const providerConfig: Record<Provider, ProviderConfig> = {
     icon: Webhook,
     label: "Custom",
     colorClass: "text-provider-custom",
+  },
+  jira: {
+    icon: Ticket,
+    label: "Jira",
+    colorClass: "text-provider-jira",
+  },
+  confluence: {
+    icon: BookOpen,
+    label: "Confluence",
+    colorClass: "text-provider-confluence",
+  },
+  email: {
+    icon: Mail,
+    label: "Email",
+    colorClass: "text-provider-email",
   },
 };
 

@@ -10,7 +10,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { getClientDb, getClientAuth } from "./client";
-import type { Provider, Context, Source } from "@/lib/types";
+import type { Provider, Priority, Context, Source } from "@/lib/types";
 
 function generateToken(): string {
   const bytes = new Uint8Array(32);
@@ -38,6 +38,8 @@ export async function createSource(
     type: "webhook" as const,
     context: data.context,
     enabled: true,
+    pushEnabled: true,
+    pushPriorityOverride: null,
     webhookToken: token,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -71,7 +73,7 @@ export async function createSource(
 export async function updateSource(
   userId: string,
   sourceId: string,
-  updates: Partial<Pick<Source, "name" | "context" | "enabled">>
+  updates: Partial<Pick<Source, "name" | "context" | "enabled" | "pushEnabled" | "pushPriorityOverride">>
 ): Promise<void> {
   const db = getClientDb();
   await updateDoc(doc(db, `users/${userId}/sources/${sourceId}`), {

@@ -7,10 +7,12 @@ import {
 } from "firebase-admin/app";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
 import { getAuth, type Auth } from "firebase-admin/auth";
+import { getMessaging, type Messaging } from "firebase-admin/messaging";
 
 let _app: App | undefined;
 let _db: Firestore | undefined;
 let _auth: Auth | undefined;
+let _messaging: Messaging | undefined;
 
 export function getAdminApp(): App {
   if (!_app) {
@@ -37,4 +39,9 @@ export function getAdminDb(): Firestore {
 export function getAdminAuth(): Auth {
   if (!_auth) _auth = getAuth(getAdminApp());
   return _auth;
+}
+
+export function getAdminMessaging(): Messaging {
+  if (!_messaging) _messaging = getMessaging(getAdminApp());
+  return _messaging;
 }

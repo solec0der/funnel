@@ -58,6 +58,9 @@
   --color-provider-gcp: var(--provider-gcp);
   --color-provider-vercel: var(--provider-vercel);
   --color-provider-custom: var(--provider-custom);
+  --color-provider-jira: var(--provider-jira);
+  --color-provider-confluence: var(--provider-confluence);
+  --color-provider-email: var(--provider-email);
 }
 
 :root {
@@ -106,6 +109,9 @@
   --provider-gcp: oklch(0.688 0.198 142);
   --provider-vercel: oklch(0.269 0 0);
   --provider-custom: oklch(0.556 0 0);
+  --provider-jira: oklch(0.536 0.209 258);
+  --provider-confluence: oklch(0.536 0.209 258);
+  --provider-email: oklch(0.556 0 0);
 }
 
 .dark {
@@ -153,6 +159,9 @@
   --provider-gcp: oklch(0.688 0.198 142);
   --provider-vercel: oklch(0.922 0 0);
   --provider-custom: oklch(0.6 0 0);
+  --provider-jira: oklch(0.636 0.209 258);
+  --provider-confluence: oklch(0.636 0.209 258);
+  --provider-email: oklch(0.6 0 0);
 }
 
 @layer base {

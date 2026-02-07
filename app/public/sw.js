@@ -39,19 +39,32 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-// Push notification handler (skeleton for Phase 2)
+// Push notification handler
 self.addEventListener("push", (event) => {
   const data = event.data?.json() ?? {
     title: "Funnel",
     body: "New notification",
   };
 
+  const tag = data.tag || data.notificationId || "funnel-default";
+  const isCritical = data.priority === "critical";
+
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
       icon: "/icons/icon-192.png",
       badge: "/icons/icon-192.png",
-      data: data.url ? { url: data.url } : undefined,
+      tag,
+      requireInteraction: isCritical,
+      data: {
+        url: data.url || "/",
+        notificationId: data.notificationId,
+        priority: data.priority,
+      },
+      actions: [
+        { action: "open", title: "Open" },
+        { action: "archive", title: "Archive" },
+      ],
     })
   );
 });
@@ -59,6 +72,35 @@ self.addEventListener("push", (event) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const url = event.notification.data?.url || "/";
-  event.waitUntil(clients.openWindow(url));
+  const { url, notificationId } = event.notification.data || {};
+
+  if (event.action === "archive" && notificationId) {
+    // POST to archive endpoint, then focus app
+    event.waitUntil(
+      fetch(`/api/notifications/${notificationId}/archive`, {
+        method: "POST",
+      })
+        .catch(() => {})
+        .then(() => focusOrOpen(url || "/"))
+    );
+    return;
+  }
+
+  // Default: open the notification URL
+  event.waitUntil(focusOrOpen(url || "/"));
 });
+
+async function focusOrOpen(url) {
+  const windowClients = await clients.matchAll({
+    type: "window",
+    includeUncontrolled: true,
+  });
+
+  for (const client of windowClients) {
+    if (client.url === url && "focus" in client) {
+      return client.focus();
+    }
+  }
+
+  return clients.openWindow(url);
+}

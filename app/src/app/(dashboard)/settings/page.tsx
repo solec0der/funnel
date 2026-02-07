@@ -2,6 +2,8 @@
 
 import { useCallback, useRef } from "react";
 import { usePreferences } from "@/hooks/use-preferences";
+import { usePush } from "@/hooks/use-push";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -28,6 +30,7 @@ const TIMEZONES = Intl.supportedValuesOf("timeZone");
 
 export default function SettingsPage() {
   const { preferences, loading, updatePreferences } = usePreferences();
+  const push = usePush();
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const debouncedUpdate = useCallback(
@@ -95,6 +98,66 @@ export default function SettingsPage() {
               ))}
             </SelectContent>
           </Select>
+        </CardContent>
+      </Card>
+
+      {/* Push Notifications */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Push Notifications</CardTitle>
+          <CardDescription>
+            Manage browser push notification settings.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">Permission:</span>
+            <span className="text-sm font-medium capitalize">
+              {push.permissionState}
+            </span>
+          </div>
+          {push.permissionState !== "denied" && (
+            <div>
+              {push.isSubscribed ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={push.unsubscribe}
+                  disabled={push.loading}
+                >
+                  Disable push
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={push.subscribe}
+                  disabled={push.loading}
+                >
+                  Enable push
+                </Button>
+              )}
+            </div>
+          )}
+          {push.permissionState === "denied" && (
+            <p className="text-sm text-muted-foreground">
+              Push notifications are blocked. Update your browser settings to enable them.
+            </p>
+          )}
+          <div className="flex items-center justify-between">
+            <Label htmlFor="push-master-mute">
+              Master mute
+              <span className="block text-xs font-normal text-muted-foreground">
+                Silence all push except critical
+              </span>
+            </Label>
+            <Switch
+              id="push-master-mute"
+              checked={preferences.pushMasterMute}
+              onCheckedChange={(checked) =>
+                debouncedUpdate({ pushMasterMute: checked })
+              }
+            />
+          </div>
         </CardContent>
       </Card>
 

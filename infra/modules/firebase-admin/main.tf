@@ -29,6 +29,15 @@ resource "google_project_iam_member" "firebase_auth_admin" {
   member  = "serviceAccount:${google_service_account.firebase_admin.email}"
 }
 
+# Cloud Messaging send access
+resource "google_project_iam_member" "cloud_messaging_send" {
+  provider = google-beta
+
+  project = var.project_id
+  role    = "roles/firebasecloudmessaging.admin"
+  member  = "serviceAccount:${google_service_account.firebase_admin.email}"
+}
+
 # Generate a JSON key for the service account
 resource "google_service_account_key" "firebase_admin" {
   provider = google-beta

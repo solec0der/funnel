@@ -13,6 +13,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   quietHoursStart: null,
   quietHoursEnd: null,
+  pushMasterMute: false,
 };
 
 export function usePreferences() {

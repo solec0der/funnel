@@ -1,6 +1,6 @@
 import type { Timestamp } from "firebase/firestore";
 
-export type Provider = "updown" | "azure_devops" | "gcp" | "vercel" | "custom";
+export type Provider = "updown" | "azure_devops" | "gcp" | "vercel" | "custom" | "jira" | "confluence" | "email";
 
 export type SourceType = "webhook" | "email" | "polling";
 
@@ -15,6 +15,8 @@ export interface Source {
   type: SourceType;
   context: Context;
   enabled: boolean;
+  pushEnabled: boolean;
+  pushPriorityOverride: Priority | null;
   webhookToken: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
@@ -66,4 +68,5 @@ export interface UserPreferences {
   timezone: string;
   quietHoursStart: string | null;
   quietHoursEnd: string | null;
+  pushMasterMute: boolean;
 }

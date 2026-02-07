@@ -25,7 +25,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { PROVIDERS } from "@/lib/normalizers";
 import { toast } from "sonner";
 import { Copy, Check, Loader2 } from "lucide-react";
-import type { Provider, Context, Source } from "@/lib/types";
+import type { Provider, Priority, Context, Source } from "@/lib/types";
 
 interface SourceSheetProps {
   open: boolean;
@@ -43,6 +43,8 @@ export function SourceSheet({
   const [name, setName] = useState("");
   const [context, setContext] = useState<Context>("both");
   const [enabled, setEnabled] = useState(true);
+  const [pushEnabled, setPushEnabled] = useState(true);
+  const [pushPriorityOverride, setPushPriorityOverride] = useState<Priority | null>(null);
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
   const [createdToken, setCreatedToken] = useState<string | null>(null);
@@ -54,6 +56,8 @@ export function SourceSheet({
     setName("");
     setContext("both");
     setEnabled(true);
+    setPushEnabled(true);
+    setPushPriorityOverride(null);
     setCreatedToken(null);
     setCopied(false);
   }
@@ -65,6 +69,8 @@ export function SourceSheet({
       setName(editSource.name);
       setContext(editSource.context);
       setEnabled(editSource.enabled);
+      setPushEnabled(editSource.pushEnabled ?? true);
+      setPushPriorityOverride(editSource.pushPriorityOverride ?? null);
     }
     onOpenChange(open);
   }
@@ -83,6 +89,8 @@ export function SourceSheet({
           name: name.trim(),
           context,
           enabled,
+          pushEnabled,
+          pushPriorityOverride,
         });
         toast.success("Source updated");
         handleOpenChange(false);
@@ -196,6 +204,43 @@ export function SourceSheet({
                 checked={enabled}
                 onCheckedChange={setEnabled}
               />
+            </div>
+          )}
+
+          {/* Push preferences (edit only) */}
+          {isEdit && (
+            <div className="flex flex-col gap-3">
+              <Label className="text-sm font-medium">Push Notifications</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="source-push-enabled" className="text-sm font-normal">
+                  Push enabled
+                </Label>
+                <Switch
+                  id="source-push-enabled"
+                  checked={pushEnabled}
+                  onCheckedChange={setPushEnabled}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm font-normal">Priority override</Label>
+                <Select
+                  value={pushPriorityOverride ?? "none"}
+                  onValueChange={(v) =>
+                    setPushPriorityOverride(v === "none" ? null : (v as Priority))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None (use default)</SelectItem>
+                    <SelectItem value="critical">Critical</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="normal">Normal</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           )}
 
