@@ -1,0 +1,26 @@
+# GCP Project
+gcp_project_id      = "my-funnel-project"
+gcp_billing_account = "XXXXXX-XXXXXX-XXXXXX"
+gcp_org_id          = ""          # Optional: GCP organization ID
+gcp_folder_id       = ""          # Optional: GCP folder ID
+
+# Firebase
+firebase_location = "us-central"  # Firestore/Firebase location
+
+# Google OAuth (for Identity Platform)
+google_oauth_client_id     = "xxxxxxxxxxxx.apps.googleusercontent.com"
+google_oauth_client_secret = "GOCSPX-xxxxxxxxxxxx"
+
+# Vercel
+vercel_api_token = ""             # Vercel API token
+vercel_team_id   = ""             # Optional: Vercel team ID
+
+# Domain
+domain = ""                       # Optional: custom domain
+
+# VAPID keys for web push notifications
+vapid_public_key  = ""
+vapid_private_key = ""
+
+# GitHub repository
+github_repo = "yh/funnel"

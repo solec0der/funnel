@@ -1,0 +1,13 @@
+# Infrastructure
+infra/*.tfstate*
+infra/.terraform/
+infra/terraform.tfvars
+
+# App
+app/node_modules/
+app/.next/
+app/.env.local
+app/.firebase-service-account.json
+
+# OS
+.DS_Store
