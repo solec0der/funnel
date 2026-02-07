@@ -23,3 +23,9 @@ variable "firestore_rules_content" {
   description = "Content of the Firestore security rules file"
   type        = string
 }
+
+variable "authorized_domains" {
+  description = "Domains authorized for Firebase Auth redirects"
+  type        = list(string)
+  default     = []
+}

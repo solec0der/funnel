@@ -1,13 +1,22 @@
-import { Bell } from "lucide-react";
+"use client";
+
+import { NotificationList } from "@/components/notifications/notification-list";
+import { useNotifications } from "@/hooks/use-notifications";
 
 export default function NotificationsPage() {
+  const { notifications, loading, loadingMore, hasMore, loadMore } =
+    useNotifications();
+
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-3 text-muted-foreground">
-      <Bell className="h-10 w-10" />
-      <h2 className="text-lg font-semibold tracking-tight text-foreground">
-        Notifications
-      </h2>
-      <p className="text-sm">Your unified inbox will appear here.</p>
+    <div className="flex flex-col gap-4">
+      <h1 className="text-lg font-semibold tracking-tight">Notifications</h1>
+      <NotificationList
+        notifications={notifications}
+        loading={loading}
+        loadingMore={loadingMore}
+        hasMore={hasMore}
+        loadMore={loadMore}
+      />
     </div>
   );
 }

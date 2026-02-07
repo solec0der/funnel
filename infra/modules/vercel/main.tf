@@ -53,6 +53,6 @@ resource "vercel_project_environment_variable" "sensitive" {
   project_id = vercel_project.this.id
   key        = each.key
   value      = each.value
-  target     = ["production", "preview", "development"]
+  target     = ["production", "preview"]
   sensitive  = true
 }

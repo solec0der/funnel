@@ -43,6 +43,7 @@ module "firebase" {
   google_oauth_client_id     = var.google_oauth_client_id
   google_oauth_client_secret = var.google_oauth_client_secret
   firestore_rules_content    = file("${path.root}/firestore.rules")
+  authorized_domains         = compact([var.domain, "funnel-alpha.vercel.app"])
 
   depends_on = [module.gcp_project]
 

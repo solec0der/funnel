@@ -33,6 +33,15 @@ resource "google_identity_platform_config" "this" {
   provider = google-beta
   project  = var.project_id
 
+  authorized_domains = concat(
+    [
+      "localhost",
+      "${var.project_id}.firebaseapp.com",
+      "${var.project_id}.web.app",
+    ],
+    var.authorized_domains,
+  )
+
   sign_in {
     allow_duplicate_emails = false
 
@@ -71,6 +80,32 @@ resource "google_firestore_database" "this" {
   location_id = var.firebase_location
 
   depends_on = [google_firebase_project.this]
+}
+
+# -----------------------------------------------------------------------------
+# Firestore Indexes
+# -----------------------------------------------------------------------------
+
+resource "google_firestore_index" "notifications_archived_created" {
+  provider = google-beta
+  project  = var.project_id
+
+  database   = google_firestore_database.this.name
+  collection = "notifications"
+
+  query_scope = "COLLECTION"
+
+  fields {
+    field_path = "archived"
+    order      = "ASCENDING"
+  }
+
+  fields {
+    field_path = "createdAt"
+    order      = "DESCENDING"
+  }
+
+  depends_on = [google_firestore_database.this]
 }
 
 # -----------------------------------------------------------------------------

@@ -53,9 +53,11 @@
   --color-priority-low: var(--priority-low);
 
   /* Provider accent colors */
-  --color-provider-github: var(--provider-github);
-  --color-provider-linear: var(--provider-linear);
-  --color-provider-slack: var(--provider-slack);
+  --color-provider-updown: var(--provider-updown);
+  --color-provider-azure-devops: var(--provider-azure-devops);
+  --color-provider-gcp: var(--provider-gcp);
+  --color-provider-vercel: var(--provider-vercel);
+  --color-provider-custom: var(--provider-custom);
 }
 
 :root {
@@ -99,9 +101,11 @@
   --priority-low: oklch(0.556 0 0);
 
   /* Providers */
-  --provider-github: oklch(0.269 0 0);
-  --provider-linear: oklch(0.585 0.233 277.117);
-  --provider-slack: oklch(0.638 0.2 145);
+  --provider-updown: oklch(0.588 0.2 145);
+  --provider-azure-devops: oklch(0.536 0.209 258);
+  --provider-gcp: oklch(0.688 0.198 142);
+  --provider-vercel: oklch(0.269 0 0);
+  --provider-custom: oklch(0.556 0 0);
 }
 
 .dark {
@@ -144,9 +148,11 @@
   --priority-low: oklch(0.556 0 0);
 
   /* Providers */
-  --provider-github: oklch(0.922 0 0);
-  --provider-linear: oklch(0.585 0.233 277.117);
-  --provider-slack: oklch(0.638 0.2 145);
+  --provider-updown: oklch(0.588 0.2 145);
+  --provider-azure-devops: oklch(0.636 0.209 258);
+  --provider-gcp: oklch(0.688 0.198 142);
+  --provider-vercel: oklch(0.922 0 0);
+  --provider-custom: oklch(0.6 0 0);
 }
 
 @layer base {
